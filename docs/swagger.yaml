@@ -116,6 +116,7 @@ definitions:
     - 2103
     - 2200
     - 2201
+    - 2300
     type: integer
     x-enum-varnames:
     - ErrBadRequest
@@ -141,6 +142,7 @@ definitions:
     - ErrAgentInvalidTemperature
     - ErrVectorStoreBindingInvalid
     - ErrVectorStoreUnavailable
+    - ErrModelInUse
   github_com_Tencent_WeKnora_internal_infrastructure_chunker.DocProfile:
     properties:
       all_caps_short_line_count:
@@ -874,7 +876,7 @@ definitions:
       max_iterations:
         description: |-
           ===== Agent Mode Settings =====
-          Maximum iterations for ReAct loop (only for agent type)
+          Maximum ReAct iterations. -1 is unlimited; 0 is unset (default applied).
         type: integer
       mcp_auth_wait_timeout:
         description: |-
@@ -6058,7 +6060,8 @@ definitions:
       source:
         description: |-
           Source is exactly one of: "@owner/slug" or a slash-free slug (ClawHub),
-          a github.com / gitlab.com / skills.sh / clawhub / skillhub page URL, or
+          a github.com / gitlab.com / skills.sh / clawhub / skillhub page URL, a
+          ClawHub skills-sh catalog page or "skills-sh:owner/repo/slug" locator, or
           a direct zip/SKILL.md URL. Bare "owner/slug" is rejected: it is both a
           ClawHub id and a GitHub repo. The fetch carries no credential.
         type: string
@@ -12843,6 +12846,10 @@ paths:
           schema:
             additionalProperties: true
             type: object
+        "400":
+          description: 模型仍被知识库、智能体或长期记忆引用
+          schema:
+            $ref: '#/definitions/github_com_Tencent_WeKnora_internal_errors.AppError'
         "404":
           description: 模型不存在
           schema:
@@ -13882,7 +13889,9 @@ paths:
         as multipart form field "file", or JSON {"source":"..."} to
         pull a public skill. source is one of: "@owner/slug" or a
         slash-free slug (ClawHub), a github.com / gitlab.com /
-        skills.sh / clawhub / skillhub URL, or a direct zip/SKILL.md
+        skills.sh / clawhub / skillhub URL, a ClawHub skills-sh
+        catalog page (https://clawhub.ai/skills-sh/owner/repo/slug),
+        a skills-sh:owner/repo/slug locator, or a direct zip/SKILL.md
         URL. Bare "owner/slug" is rejected as ambiguous. The source
         must be readable anonymously. The install boots a sandbox and
         runs for minutes, so the request is only accepted; follow it
