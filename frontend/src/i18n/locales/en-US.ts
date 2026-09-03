@@ -2418,7 +2418,14 @@ export default {
     },
     menu: {
       viewDetails: 'View Details',
-      duplicate: 'Duplicate'
+      duplicate: 'Duplicate',
+      sync: 'Sync'
+    },
+    sync: {
+      confirmTitle: 'Sync to FastGPT',
+      confirmBody: 'Submit the contents of this knowledge base to be synced to FastGPT. Continue?',
+      completed: 'Sync completed: {success} chunks written, {fail} failed',
+      failed: 'Sync failed'
     },
     pin: {
       pin: 'Pin to Top',

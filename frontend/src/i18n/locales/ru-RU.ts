@@ -4256,7 +4256,14 @@ export default {
     },
     menu: {
       viewDetails: 'View Details',
-      duplicate: 'Duplicate'
+      duplicate: 'Duplicate',
+      sync: 'Синхронизация'
+    },
+    sync: {
+      confirmTitle: 'Синхронизация в FastGPT',
+      confirmBody: 'Отправить содержимое этой базы знаний для синхронизации в FastGPT. Продолжить?',
+      completed: 'Синхронизация завершена: записано {success} фрагментов, ошибок {fail}',
+      failed: 'Ошибка синхронизации'
     },
     delete: {
       confirmTitle: 'Подтверждение удаления',

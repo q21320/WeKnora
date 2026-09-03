@@ -16,6 +16,8 @@ services:
       # For remote deployment, set this to the remote App's service port.
       - APP_PORT=${APP_BACKEND_PORT:-8080}
       - APP_SCHEME=${APP_SCHEME:-http}
+      # FastGPT 同步桥接地址：nginx location /fastgpt/ 反代到此（前端「同步到 FastGPT」直连桥接）。
+      - SYNC_BRIDGE_URL=${SYNC_BRIDGE_URL:-}
     # NOTE: If using a remote App backend, comment out or remove the depends_on
     # block below and set APP_HOST/APP_BACKEND_PORT/APP_SCHEME in your .env file.
     depends_on:

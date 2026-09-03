@@ -178,6 +178,13 @@ export function duplicateKnowledgeBase(id: string) {
   return post(`/api/v1/knowledge-bases/${id}/duplicate`);
 }
 
+// 同步知识库到 FastGPT：后端转发到同步桥接服务（/api/push），
+// 传 weknora_kb_id 整库同步，后端同步等待执行完成后返回统计。
+// 大知识库耗时可达数分钟，超时放宽到 10 分钟（与后端超时对齐）。
+export function syncKnowledgeBaseToFastGPT(id: string) {
+  return post(`/fastgpt/api/push`, { weknora_kb_id: id }, { timeout: 10 * 60 * 1000 });
+}
+
 // 获取可移动目标知识库列表（同类型、同Embedding模型）
 export function listMoveTargets(sourceKbId: string) {
   return get(`/api/v1/knowledge-bases/${sourceKbId}/move-targets`);

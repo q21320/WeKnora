@@ -4256,7 +4256,14 @@ export default {
     },
     menu: {
       viewDetails: '세부 사항을 확인하세요',
-      duplicate: '복제'
+      duplicate: '복제',
+      sync: '동기화'
+    },
+    sync: {
+      confirmTitle: 'FastGPT로 동기화',
+      confirmBody: '현재 지식 베이스의 내용을 FastGPT로 동기화하도록 제출합니다. 계속하시겠습니까?',
+      completed: '동기화 완료: {success}개 청크 작성 성공, {fail}개 실패',
+      failed: '동기화 실패'
     },
     delete: {
       confirmTitle: '삭제 확인',

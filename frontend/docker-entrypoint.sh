@@ -19,7 +19,10 @@ export MAX_FILE_SIZE=${MAX_FILE_SIZE_MB}M
 export APP_HOST=${APP_HOST:-app}
 export APP_PORT=${APP_PORT:-8080}
 export APP_SCHEME=${APP_SCHEME:-http}
-envsubst '${MAX_FILE_SIZE} ${APP_HOST} ${APP_PORT} ${APP_SCHEME}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+# FastGPT 同步桥接地址（nginx location /fastgpt/ 的反代目标）。必须给默认值：
+# 若留空，envsubst 后 nginx.conf 会残留字面量 ${SYNC_BRIDGE_URL}，nginx 启动即报 unknown variable 崩溃。
+export SYNC_BRIDGE_URL=${SYNC_BRIDGE_URL:-http://127.0.0.1:8000}
+envsubst '${MAX_FILE_SIZE} ${APP_HOST} ${APP_PORT} ${APP_SCHEME} ${SYNC_BRIDGE_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
 
 # 启动 nginx
 exec nginx -g 'daemon off;'

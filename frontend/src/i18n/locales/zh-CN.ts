@@ -4258,7 +4258,14 @@ export default {
     },
     menu: {
       viewDetails: '查看详情',
-      duplicate: '创建副本'
+      duplicate: '创建副本',
+      sync: '同步'
+    },
+    sync: {
+      confirmTitle: '同步到 FastGPT',
+      confirmBody: '将当前知识库的内容提交同步到 FastGPT，是否继续？',
+      completed: '同步完成：成功写入 {success} 个分片，失败 {fail} 个',
+      failed: '同步失败'
     },
     delete: {
       confirmTitle: '删除确认',

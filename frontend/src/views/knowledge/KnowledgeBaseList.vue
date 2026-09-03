@@ -225,6 +225,10 @@
                         <span>{{ $t('knowledgeList.menu.duplicate') }}</span>
                       </div>
                       <template v-if="canManageKBCard(kb)">
+                        <div class="popup-menu-item" @click.stop="handleSyncById(kb.id)">
+                          <t-icon class="menu-icon" name="refresh" />
+                          <span>{{ $t('knowledgeList.menu.sync') }}</span>
+                        </div>
                         <div class="popup-menu-item" @click.stop="handleSettingsById(kb.id)">
                           <t-icon class="menu-icon" name="setting" />
                           <span>{{ $t('knowledgeBase.settings') }}</span>
@@ -458,6 +462,10 @@
                         <span>{{ $t('knowledgeList.menu.duplicate') }}</span>
                       </div>
                       <template v-if="canManageKBCard(kb)">
+                        <div class="popup-menu-item" @click.stop="handleSync(kb)">
+                          <t-icon class="menu-icon" name="refresh" />
+                          <span>{{ $t('knowledgeList.menu.sync') }}</span>
+                        </div>
                         <div class="popup-menu-item" @click.stop="handleSettings(kb)">
                           <t-icon class="menu-icon" name="setting" />
                           <span>{{ $t('knowledgeBase.settings') }}</span>
@@ -782,8 +790,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { MessagePlugin, Icon as TIcon } from 'tdesign-vue-next'
-import { deleteKnowledgeBase, duplicateKnowledgeBase, togglePinKnowledgeBase } from '@/api/knowledge-base'
+import { MessagePlugin, DialogPlugin, Icon as TIcon } from 'tdesign-vue-next'
+import { deleteKnowledgeBase, duplicateKnowledgeBase, togglePinKnowledgeBase, syncKnowledgeBaseToFastGPT } from '@/api/knowledge-base'
 import { useChatResourcesStore } from '@/stores/chatResources'
 import { formatStringDate } from '@/utils/index'
 import { useUIStore } from '@/stores/ui'
@@ -1435,11 +1443,43 @@ const handleTogglePinById = async (id: string) => {
 
 const handleDuplicate = async (kb: KB) => {
   kb.showMore = false
-  await duplicateKB(kb.id)
+  await dupl
+  
+  icateKB(kb.id)
 }
 
 const handleDuplicateById = async (id: string) => {
   await duplicateKB(id)
+}
+
+// 同步知识库入口（预留）：后端 API 待接入，目前仅占位。
+// handleSync 用于「我的」Tab（顺带关闭弹出菜单），handleSyncById 用于「全部」Tab。
+const handleSync = (kb: KB) => {
+  kb.showMore = false
+  handleSyncById(kb.id)
+}
+
+// 同步到 FastGPT：确认后调后端转发接口（后端 → 同步桥接服务 /api/push），
+// 前端同源调用，无跨域问题。
+const handleSyncById = (id: string) => {
+  const dialog = DialogPlugin.confirm({
+    header: t('knowledgeList.sync.confirmTitle'),
+    body: t('knowledgeList.sync.confirmBody'),
+    confirmBtn: t('common.confirm'),
+    cancelBtn: t('common.cancel'),
+    onConfirm: async () => {
+      try {
+        await syncKnowledgeBaseToFastGPT(id)
+        dialog.destroy()
+      } catch (e: any) {
+        console.error('[KnowledgeBaseList] sync to FastGPT failed:', e)
+        MessagePlugin.error(e?.message || t('knowledgeList.sync.failed'))
+      }
+    },
+    onCancel: () => {
+      dialog.destroy()
+    },
+  })
 }
 
 const duplicateKB = async (id: string) => {

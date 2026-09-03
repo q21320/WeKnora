@@ -52,6 +52,12 @@ const DEV_PROXY_TARGET =
   process.env.FRONTEND_BACKEND_URL ||
   'http://localhost:8080'
 
+// FastGPT 同步桥接服务地址：前端 /fastgpt/* 直连桥接服务（与 nginx.conf 的 location /fastgpt/ 对齐）。
+// dev 下 vite 独立启动、不会加载仓库根 .env，故给一个与 .env 一致的默认值兜底。
+const SYNC_BRIDGE_TARGET =
+  process.env.SYNC_BRIDGE_URL ||
+  'http://192.155.1.123:8000'
+
 function resolveVueOfficePptxEntry(): string {
   try {
     const pkgDir = dirname(require.resolve('@vue-office/pptx/package.json'))
@@ -141,6 +147,14 @@ export default defineConfig({
         target: DEV_PROXY_TARGET,
         changeOrigin: true,
         secure: false,
+      },
+      // 前端 /fastgpt/* 直连 FastGPT 同步桥接服务：去掉 /fastgpt 前缀后转发，
+      // /fastgpt/api/push -> {SYNC_BRIDGE_URL}/api/push（与 nginx location /fastgpt/ 一致）。
+      '/fastgpt': {
+        target: SYNC_BRIDGE_TARGET,
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/fastgpt/, ''),
       }
     }
   },
@@ -160,6 +174,12 @@ export default defineConfig({
         target: DEV_PROXY_TARGET,
         changeOrigin: true,
         secure: false,
+      },
+      '/fastgpt': {
+        target: SYNC_BRIDGE_TARGET,
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/fastgpt/, ''),
       }
     }
   }
